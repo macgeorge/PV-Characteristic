@@ -14,22 +14,22 @@ mode=1;
 %ζεύγος input
 
 %Inputs
-irradiance=[750 0 0];
-temperature=[25 0 60];
-color=['m' 'y' 'b']; %οι τρεις πίνακες θα πρέπει να έχουν το ίδιο μέγεθος
+irradiance=[500 1000 1000];
+temperature=[25 25 60];
+color=['m' 'r' 'b']; %οι τρεις πίνακες θα πρέπει να έχουν το ίδιο μέγεθος
 
 %Parameters
 %Δεδομένα για τα Φ/Β SolarNova PXQ 36/53 D
-Rs=0.0; %πρέπει να υπολογίζεται από το datasheet
-Voc=43.64;
-Isc=5.45;
-Vmp=36.36;
-Imp=4.95;
-temperatureref=25;
-irradianceref=1000;
-coefP=-0.47;
-coefVoc=-0.38;
-coefIsc=0.1;
+% Rs=0.0; %πρέπει να υπολογίζεται από το datasheet
+% Voc=43.64;
+% Isc=5.45;
+% Vmp=36.36;
+% Imp=4.95;
+% temperatureref=25;
+% irradianceref=1000;
+% coefP=-0.47;
+% coefVoc=-0.38;
+% coefIsc=0.1;
 
 %Δεδομένα για τα Φ/Β BP Solar MX110
 Rs=0.0; %πρέπει να υπολογίζεται από το datasheet
@@ -78,18 +78,23 @@ if mode==1;
         if Vmax1>Vmax Vmax=Vmax1; end
         if Imax1>Imax Imax=Imax1; end
         if Pmax1>Pmax Pmax=Pmax1; end
-        V=0:0.1:Vmax1;
+        V=0:0.1:(Vmax1);
         Vr=V+b*(temperature(i)-temperatureref)+Rs*D1;
         I=Isc*(1-C1*(exp(Vr/(C2*Voc))-1))+D1;
         P=V.*I;
         subplot(2,1,1);
         plot(V,I,color(i),'LineWidth',5);
-        axis([0,Vmax+1,0,Imax+1]);
+        axis([0,Vmax*1.1,0,Imax*1.3]);
+        title('PV Characteristic');
+        ylabel('Current [A]');
+        xlabel('Voltage [V]');
         grid minor
         hold on;
         subplot(2,1,2);
         plot(V,P,color(i),'LineWidth',5);
-        axis([0,Vmax+1,0,Pmax]);
+        axis([0,Vmax*1.1,0,Pmax]);
+        ylabel('Power [W]');
+        xlabel('Voltage [V]');
         grid minor
         hold on;
     end
@@ -104,7 +109,7 @@ if mode==2
         D1=a*irradiance(i)/irradianceref*(temperature(i)-temperatureref)+Isc*(irradiance(i)/irradianceref-1);
         Vmax1=C2*Voc*log((1-(0-D1)/Isc)/C1+1)-b*(temperature(i)-temperatureref)-Rs*D1;
         Vrmax=0+b*(temperature(i)-temperatureref)+Rs*D1;
-        Imax1=Isc*(1-C1*(exp(Vrmax/(C2*Voc))-1))+D1;
+        Imax1=Isc*(1-C1*(exp(Vrmax/(C2*Voc))-1))+D1
         Pmax1=Vmax1*Imax1*0.9;
         if Vmax1>Vmax Vmax=Vmax1; end
         if Imax1>Imax Imax=Imax1; end
@@ -116,14 +121,21 @@ if mode==2
         plot(V,I,color(i),'LineWidth',5);
         axis([0,Vmax+1,0,Imax+1]);
         grid minor
+        title('PV Characteristic');
+        ylabel('Current [A]');
+        xlabel('Voltage [V]');
         hold on;
         subplot(2,1,2);
         plot(V,P,color(i),'LineWidth',5);
+        ylabel('Current [A]');
+        xlabel('Power [W]');
         grid minor
         axis([0,Vmax+1,0,Pmax]);
         hold on;
     end
 end
+
+
 
 %Δημιουργία LUT
 if mode==3;
